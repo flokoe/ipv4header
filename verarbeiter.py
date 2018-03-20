@@ -102,8 +102,11 @@ class Verarbeiter:
             binSplit = re.findall('.{1,8}',hdrField)
             addr = ''
 
-            for chunk in binSplit:
-                addr += str(int(chunk, 2)) + '.'
+            for idx, chunk in enumerate(binSplit):
+                if idx == 3:
+                    addr += str(int(chunk, 2))
+                else:
+                    addr += str(int(chunk, 2)) + '.'
         
             if field == 'sipBin':
                 self.header1.sip = addr
