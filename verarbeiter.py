@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from header import Header
+import re
 
 class Verarbeiter:
     'Verarbeitung von Input und Output'
@@ -19,7 +20,15 @@ class Verarbeiter:
                 self.header1.flagsBin = inpu
             else:
                 inpu2 = input()
-                setattr(self.header1, var, inpu2)
+                reg = r'\b(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\b'
+                match = re.search(reg, inpu2)
+                if match:
+                    setattr(self.header1, var, inpu2)
+                else:
+                    if var == 'sip':
+                        setattr(self.header1, 'sipBin', inpu2)
+                    else:
+                        setattr(self.header1, 'dipBin', inpu2)
             print('')
 
     def dec2bin(self):
@@ -85,11 +94,26 @@ class Verarbeiter:
         print('')
         print(outputStr2)
 
+    def start(self):
+        self.userInput()
+
+        print('sip: ' + str(self.header1.sip))
+        print(self.header1.sipBin)
+
+        print('dip: ' + str(self.header1.dip))
+        print(self.header1.dipBin)
+
+        if self.header1.sipBin == None:
+            print('tets')
+            self.dec2bin()
+            self.calcIHL()
+            self.calcTotalLenght()
+            self.printAll()
+        else:
+            print('jo')
+            # sds
+
 if __name__ == '__main__':
     app = Verarbeiter()
 
-    app.userInput()
-    app.dec2bin()
-    app.calcIHL()
-    app.calcTotalLenght()
-    app.printAll()
+    app.start()

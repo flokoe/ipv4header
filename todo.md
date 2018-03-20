@@ -1,8 +1,8 @@
 validierung eingaben
-errechnung aller felder
-binär rechner
-umrechnung von binär in decimal sys
-umrechnung von decimal sys in binär 
+-errechnung aller felder
+-binär rechner
+-umrechnung von binär in decimal sys
+-umrechnung von decimal sys in binär 
 ipv6 (verarbeitung)
 
 0100 0110 00011000 0000000000000110 0000000000000000 000 0000000000000 00100000 00000000 0000000000000000 11000011 10101000 00000000 11100110 
