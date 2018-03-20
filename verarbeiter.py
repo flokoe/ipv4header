@@ -94,24 +94,35 @@ class Verarbeiter:
         print('')
         print(outputStr2)
 
+    def bin2dec(self):
+        fields = ['sipBin', 'dipBin']
+
+        for field in fields:
+            hdrField = getattr(self.header1, field)
+            binSplit = re.findall('.{1,8}',hdrField)
+            addr = ''
+
+            for chunk in binSplit:
+                addr += str(int(chunk, 2)) + '.'
+        
+            if field == 'sipBin':
+                self.header1.sip = addr
+            else:
+                self.header1.dip = addr
+
     def start(self):
         self.userInput()
 
-        print('sip: ' + str(self.header1.sip))
-        print(self.header1.sipBin)
-
-        print('dip: ' + str(self.header1.dip))
-        print(self.header1.dipBin)
-
         if self.header1.sipBin == None:
-            print('tets')
             self.dec2bin()
             self.calcIHL()
             self.calcTotalLenght()
             self.printAll()
         else:
-            print('jo')
-            # sds
+            self.bin2dec()
+            self.calcIHL()
+            self.calcTotalLenght()
+            self.printAll()
 
 if __name__ == '__main__':
     app = Verarbeiter()
