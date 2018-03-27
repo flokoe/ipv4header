@@ -1,135 +1,51 @@
 #!/usr/bin/python3
 
-from header import Header
-import re
+from headers import IPv4Header
+from headers import IPv6Header
 
 class Verarbeiter:
     'Verarbeitung von Input und Output'
 
-    # Create header obj
-    header1 = Header()
+    ipv4fields = {'ihl': 'ihl', 'tos': 'type of service', 'totalLength': 'totalLength', 'kennung': 'kennung', 'flags': 'flags', 'fragmentoffset': 'fragment offset', 'ttl': 'time to live', 'proto': 'protocol', 'chksum': 'chksum', 'sip': 'source IP', 'dip': 'destination IP'}
+    ipv6fields = {'trafficClass': 'traffic class', 'flowLabel': 'flow label', 'payloadlength': 'payload length', 'nextHeader': 'next header', 'hopLimit': 'hop limit', 'sip': 'source IP', 'dip': 'destination IP'}
+    ignoreList = ['ihl', 'totalLength', 'chksum']
 
-    def userInput(self):
-        inputVars = {'flags': 'flags', 'sip': 'source IP', 'dip': 'destination IP'}
+    ipv6defaults = {'trafficClass': '24', 'flowLabel': '42', 'payloadlength': '0', 'nextHeader': '0', 'hopLimit': '32', 'sip': '2001:0db8:0000:08d3:0000:8a2e:0070:7344', 'dip': '2001:0db8:85a3:08d3:1319:8a2e:0370:7344'}
+    ipv4defaults = {'tos': '24', 'kennung': '0', 'flags': '0', 'fragmentoffset': '0', 'ttl': '32', 'proto': '0', 'sip': '195.168.1.102', 'dip': '223. 168.1.102'}
 
-        for var in inputVars:
-            print('Please provide ' + inputVars[var])
-            if var == 'flags':
-                inpu = input()
-                self.header1.flags = inpu
-                self.header1.flagsBin = inpu
-            else:
-                inpu2 = input()
-                reg = r'\b(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\b'
-                match = re.search(reg, inpu2)
-                if match:
-                    setattr(self.header1, var, inpu2)
-                else:
-                    if var == 'sip':
-                        setattr(self.header1, 'sipBin', inpu2)
-                    else:
-                        setattr(self.header1, 'dipBin', inpu2)
-            print('')
-
-    def dec2bin(self):
-        fields = ['sip', 'dip']
-
-        for index in fields:
-            if index == 'sip':
-                binList = self.header1.sip.split('.')
-            else:
-                binList = self.header1.dip.split('.')
-            binNum = ''
-
-            for index2 in binList:
-                binNum += bin(int(index2))[2:].zfill(8)
-            
-            if index == 'sip':
-                self.header1.sipBin = binNum
-            else:
-                self.header1.dipBin = binNum
-
-    def calcIHL(self):
-        binLength = 0
-        fields = ('versionBin', 'tosBin', 'kennungBin', 'flagsBin', 'fragmentOffsetBin', 'ttlBin', 'protoBin', 'chksumBin', 'sipBin', 'dipBin')
-
-        for index in range(len(fields)):
-            binLength += len(getattr(self.header1, fields[index]))
-
-        ihlDec = (binLength + 24) // 32
-        self.header1.ihl = ihlDec
-        self.header1.ihlBin = bin(ihlDec)[2:].zfill(4)
-
-    def calcTotalLenght(self):
-        binLength = 0
-        fields = ('versionBin', 'tosBin', 'kennungBin', 'flagsBin', 'fragmentOffsetBin', 'ttlBin', 'protoBin', 'chksumBin', 'sipBin', 'dipBin')
-
-        # add lenght of binary fields
-        for index in range(len(fields)):
-            binLength += len(getattr(self.header1, fields[index]))
-
-        totalLengthDec = (binLength + 24) // 8
-        # set total length in dec and bin
-        self.header1.totalLength = totalLengthDec
-        self.header1.totalLengthBin = bin(totalLengthDec)[2:].zfill(16)
-
-    def printAll(self):
-        outputStr = ''
-        outputStr2 = ''
-        fields = ('version', 'ihl', 'tos', 'totalLength', 'kennung', 'flags', 'fragmentOffset', 'ttl', 'proto', 'chksum', 'sip', 'dip')
-        fieldsBin = ('versionBin', 'ihlBin', 'tosBin', 'totalLengthBin', 'kennungBin', 'flagsBin', 'fragmentOffsetBin', 'ttlBin', 'protoBin', 'chksumBin', 'sipBin', 'dipBin')
-
-        # iterate over all attributes
+    def userInput(self, header, fields, defaults):
         for field in fields:
-            if field != 'dip':
-                outputStr += str(getattr(self.header1, field)) + '-'
-            else:
-                outputStr += str(getattr(self.header1, field))
+            if field not in self.ignoreList:
+                eingabe = input('Please provide ' + fields[field] + ' [' + defaults[field] + ']: ')
+                if eingabe == '':
+                    setattr(header, field, defaults[field])
+                else:
+                    setattr(header, field, eingabe)
 
-        for field2 in fieldsBin:
-            if field2 != 'dipBin':
-                outputStr2 += str(getattr(self.header1, field2)) + ' '
-            else:
-                outputStr2 += str(getattr(self.header1, field2))
-
-        print('Output:')
-        print(outputStr)
+    def printAll(self, header, fields):
+        output = ''
+        output += str(getattr(header, 'version')) + '-'
         print('')
-        print(outputStr2)
-
-    def bin2dec(self):
-        fields = ['sipBin', 'dipBin']
-
+        print('Output:')
         for field in fields:
-            hdrField = getattr(self.header1, field)
-            binSplit = re.findall('.{1,8}',hdrField)
-            addr = ''
-
-            for idx, chunk in enumerate(binSplit):
-                if idx == 3:
-                    addr += str(int(chunk, 2))
-                else:
-                    addr += str(int(chunk, 2)) + '.'
-        
-            if field == 'sipBin':
-                self.header1.sip = addr
+            if field == 'dip':
+                output += str(getattr(header, field))
             else:
-                self.header1.dip = addr
+                output += str(getattr(header, field)) + '-'
+        print(output)
 
     def start(self):
-        self.userInput()
-
-        # check if dec or bin input
-        if self.header1.sipBin == None:
-            self.dec2bin()
-            self.calcIHL()
-            self.calcTotalLenght()
-            self.printAll()
+        headerChoice = input('Please chose your header version (e.g. 4 or 6)[6]: ')
+        if headerChoice == '' or headerChoice == '6':
+            self.ipv6header1 = IPv6Header(6)
+            self.userInput(self.ipv6header1, self.ipv6fields, self.ipv6defaults)
+            self.printAll(self.ipv6header1, self.ipv6fields)
+        elif headerChoice == '4':
+            self.ipv4header1 = IPv4Header(4)
+            self.userInput(self.ipv4header1, self.ipv4fields, self.ipv4defaults)
+            self.printAll(self.ipv4header1, self.ipv4fields)
         else:
-            self.bin2dec()
-            self.calcIHL()
-            self.calcTotalLenght()
-            self.printAll()
+            print('Please provide a correct version.')
 
 if __name__ == '__main__':
     app = Verarbeiter()
