@@ -7,10 +7,11 @@ class Verarbeiter:
     'Verarbeitung von Input und Output'
 
     ipv4fields = {'ihl': 'ihl', 'tos': 'type of service', 'totalLength': 'totalLength', 'kennung': 'kennung', 'flags': 'flags', 'fragmentoffset': 'fragment offset', 'ttl': 'time to live', 'proto': 'protocol', 'chksum': 'chksum', 'sip': 'source IP', 'dip': 'destination IP'}
-    ipv6fields = {'trafficClass': 'traffic class', 'flowLabel': 'flow label', 'payloadlength': 'payload length', 'nextHeader': 'next header', 'hopLimit': 'hop limit', 'sip': 'source IP', 'dip': 'destination IP'}
+    ipv6fields = {'trafficClass': 'traffic class', 'flowLabel': 'flow label', 'payloadLength': 'payload length', 'nextHeader': 'next header', 'hopLimit': 'hop limit', 'sip': 'source IP', 'dip': 'destination IP'}
+
     ignoreList = ['ihl', 'totalLength', 'chksum']
 
-    ipv6defaults = {'trafficClass': '24', 'flowLabel': '42', 'payloadlength': '0', 'nextHeader': '0', 'hopLimit': '32', 'sip': '2001:0db8:0000:08d3:0000:8a2e:0070:7344', 'dip': '2001:0db8:85a3:08d3:1319:8a2e:0370:7344'}
+    ipv6defaults = {'trafficClass': '24', 'flowLabel': '42', 'payloadLength': '0', 'nextHeader': '0', 'hopLimit': '32', 'sip': '2001:0db8:0000:08d3:0000:8a2e:0070:7344', 'dip': '2001:0db8:85a3:08d3:1319:8a2e:0370:7344'}
     ipv4defaults = {'tos': '24', 'kennung': '0', 'flags': '000', 'fragmentoffset': '0', 'ttl': '32', 'proto': '0', 'sip': '195.168.1.102', 'dip': '223.168.1.102'}
 
     def userInput(self, header, fields, defaults):
@@ -24,15 +25,41 @@ class Verarbeiter:
 
     def printAll(self, header, fields):
         output = ''
+        outputBin = ''
         output += str(getattr(header, 'version')) + '-'
-        print('')
-        print('Output:')
+        outputBin += bin(getattr(header, 'version'))[2:].zfill(4) + ' '
+
         for field in fields:
             if field == 'dip':
                 output += str(getattr(header, field))
             else:
                 output += str(getattr(header, field)) + '-'
+
+        if getattr(header, 'version') == '4':
+            print('ipv4 bin')
+        else:
+            for field in fields:
+                if field in ['trafficClass', 'nextHeader', 'hopLimit']:
+                    outputBin += bin(int(getattr(header, field)))[2:].zfill(8)
+                elif field == 'flowLabel':
+                    outputBin += bin(int(getattr(header, field)))[2:].zfill(20)
+                elif field == 'payloadLength':
+                    outputBin += bin(int(getattr(header, field)))[2:].zfill(16)
+                if field == 'dip' or field == 'sip':
+                    v6IPBin = ''
+                    v6IPSplit = getattr(header, field).split(':')
+                    for split in v6IPSplit:
+                        v6IPBin += bin(int(split, 16))[2:].zfill(16)
+
+                    outputBin += v6IPBin
+            
+                outputBin += ' '
+
+        print('')
+        print('Output:')
         print(output)
+        print('')
+        print(outputBin)
 
     def start(self):
         headerChoice = input('Please chose your header version (e.g. 4 or 6)[6]: ')

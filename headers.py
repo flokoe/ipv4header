@@ -43,6 +43,6 @@ class IPv6Header(IPHeader):
     # Decimal fields
     trafficClass = None
     flowLabel = None
-    payloadlength = None
+    payloadLength = None
     nextHeader = None
     hopLimit = None
