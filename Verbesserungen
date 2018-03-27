@@ -1,0 +1,5 @@
+- bessere Umsetzung von OOP
+- weniger selber bauen, mehr packages und funktionien benutzen
+- ip validierung nicht mit regex, sondern zb sockets oder ipaddres spackage
+- iteration über die atribute verändern bessern.
+- repetition minimieren

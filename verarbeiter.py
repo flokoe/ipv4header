@@ -64,10 +64,12 @@ class Verarbeiter:
         binLength = 0
         fields = ('versionBin', 'tosBin', 'kennungBin', 'flagsBin', 'fragmentOffsetBin', 'ttlBin', 'protoBin', 'chksumBin', 'sipBin', 'dipBin')
 
+        # add lenght of binary fields
         for index in range(len(fields)):
             binLength += len(getattr(self.header1, fields[index]))
 
         totalLengthDec = (binLength + 24) // 8
+        # set total length in dec and bin
         self.header1.totalLength = totalLengthDec
         self.header1.totalLengthBin = bin(totalLengthDec)[2:].zfill(16)
 
@@ -77,6 +79,7 @@ class Verarbeiter:
         fields = ('version', 'ihl', 'tos', 'totalLength', 'kennung', 'flags', 'fragmentOffset', 'ttl', 'proto', 'chksum', 'sip', 'dip')
         fieldsBin = ('versionBin', 'ihlBin', 'tosBin', 'totalLengthBin', 'kennungBin', 'flagsBin', 'fragmentOffsetBin', 'ttlBin', 'protoBin', 'chksumBin', 'sipBin', 'dipBin')
 
+        # iterate over all attributes
         for field in fields:
             if field != 'dip':
                 outputStr += str(getattr(self.header1, field)) + '-'
@@ -85,7 +88,7 @@ class Verarbeiter:
 
         for field2 in fieldsBin:
             if field2 != 'dipBin':
-                outputStr2 += str(getattr(self.header1, field2)) + '-'
+                outputStr2 += str(getattr(self.header1, field2)) + ' '
             else:
                 outputStr2 += str(getattr(self.header1, field2))
 
@@ -116,6 +119,7 @@ class Verarbeiter:
     def start(self):
         self.userInput()
 
+        # check if dec or bin input
         if self.header1.sipBin == None:
             self.dec2bin()
             self.calcIHL()
