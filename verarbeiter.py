@@ -16,6 +16,7 @@ class Verarbeiter:
 
     def userInput(self, header, fields, defaults):
         for field in fields:
+            # ignore specific fileds because they are always the same in an empty header
             if field not in self.ignoreList:
                 eingabe = input('Please provide ' + fields[field] + ' [' + defaults[field] + ']: ')
                 if eingabe == '':

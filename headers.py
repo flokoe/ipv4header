@@ -23,20 +23,6 @@ class IPv4Header(IPHeader):
     proto = None
     chksum = '0'
 
-    # Binary fields
-    versionBin = None
-    ihlBin = None
-    tosBin = '00011000'
-    totalLengthBin = None
-    kennungBin = '0000000000000000'
-    flagsBin = None
-    fragmentOffsetBin = '0000000000000'
-    ttlBin = '00100000'
-    protoBin = '00000000'
-    chksumBin = '0000000000000000'
-    sipBin = None
-    dipBin = None
-
 class IPv6Header(IPHeader):
     'IPv6 header and its fields'
 
