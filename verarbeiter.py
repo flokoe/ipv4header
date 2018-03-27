@@ -11,7 +11,7 @@ class Verarbeiter:
     ignoreList = ['ihl', 'totalLength', 'chksum']
 
     ipv6defaults = {'trafficClass': '24', 'flowLabel': '42', 'payloadlength': '0', 'nextHeader': '0', 'hopLimit': '32', 'sip': '2001:0db8:0000:08d3:0000:8a2e:0070:7344', 'dip': '2001:0db8:85a3:08d3:1319:8a2e:0370:7344'}
-    ipv4defaults = {'tos': '24', 'kennung': '0', 'flags': '0', 'fragmentoffset': '0', 'ttl': '32', 'proto': '0', 'sip': '195.168.1.102', 'dip': '223. 168.1.102'}
+    ipv4defaults = {'tos': '24', 'kennung': '0', 'flags': '000', 'fragmentoffset': '0', 'ttl': '32', 'proto': '0', 'sip': '195.168.1.102', 'dip': '223. 168.1.102'}
 
     def userInput(self, header, fields, defaults):
         for field in fields:
