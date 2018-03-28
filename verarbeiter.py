@@ -2,6 +2,7 @@
 
 from headers import IPv4Header
 from headers import IPv6Header
+import re
 
 class Verarbeiter:
     'Verarbeitung von Input und Output'
@@ -57,6 +58,7 @@ class Verarbeiter:
                     outputBin += v4IPBin
 
                 outputBin += ' '
+        # ipv6 binary output
         else:
             for field in fields:
                 if field in ['trafficClass', 'nextHeader', 'hopLimit']:
@@ -81,8 +83,41 @@ class Verarbeiter:
         print('')
         print(outputBin)
 
+    def printBin(self, binSplit):
+        asciiOutput = ''
+        # ipv4
+        if binSplit[0] == '0100':
+            # for each binary field
+            for split in binSplit:
+                # ignore flags field
+                if split == '000':
+                    asciiOutput += split + '-'
+                elif len(split) == 32:
+                    ipDec = ''
+                    # get 8 bit fields of 32 bit string
+                    ipBin = re.findall('........', split)
+                    for octet in ipBin:
+                        if octet == ipBin[-1]:
+                            ipDec += str(int(octet, 2))
+                        else:
+                            ipDec += str(int(octet, 2)) + '.'
+
+                    if split == binSplit[-1]:
+                        asciiOutput += ipDec
+                    else:
+                        asciiOutput += ipDec + '-'
+                else:
+                    asciiOutput +=str(int(split, 2)) + '-'
+        
+            return asciiOutput
+
+        elif binSplit[0] == '0110':
+            pass
+        else:
+            return 'Please provide correct version.'
+
     def start(self):
-        headerChoice = input('Please chose your header version (e.g. 4 or 6)[6]: ')
+        headerChoice = input('Please chose your header version (e.g. 4 or 6) or provide binary input [6]: ')
         if headerChoice == '' or headerChoice == '6':
             self.ipv6header1 = IPv6Header(6)
             self.userInput(self.ipv6header1, self.ipv6fields, self.ipv6defaults)
@@ -91,8 +126,12 @@ class Verarbeiter:
             self.ipv4header1 = IPv4Header(4)
             self.userInput(self.ipv4header1, self.ipv4fields, self.ipv4defaults)
             self.printAll(self.ipv4header1, self.ipv4fields)
+        elif re.search(r'[01 ]+', headerChoice):
+            binarySplit = headerChoice.split(' ')
+            print('\nOutput:')
+            print(self.printBin(binarySplit))
         else:
-            print('Please provide a correct version.')
+            print('Please provide a correct version or binary input.')
 
 if __name__ == '__main__':
     app = Verarbeiter()
