@@ -73,7 +73,7 @@ class Verarbeiter:
                     for split in v6IPSplit:
                         v6IPBin += bin(int(split, 16))[2:].zfill(16)
 
-                    outputBin += v6IPBin
+                    outputBin += v6IPBin + ' '
             
                 outputBin += ' '
 
@@ -107,12 +107,33 @@ class Verarbeiter:
                     else:
                         asciiOutput += ipDec + '-'
                 else:
-                    asciiOutput +=str(int(split, 2)) + '-'
+                    asciiOutput += str(int(split, 2)) + '-'
         
             return asciiOutput
 
+        # ipv6 ascii output
         elif binSplit[0] == '0110':
-            pass
+            # for each binary field
+            for split in binSplit:
+                # create ipv6 ip
+                if len(split) == 128:
+                    ipDec = ''
+                    # get 8 bit fields of 32 bit string
+                    ipBin = re.findall('................', split)
+                    for hextet in ipBin:
+                        if hextet == ipBin[-1]:
+                            ipDec += hex(int(hextet, 2))[2:].zfill(4)
+                        else:
+                            ipDec += hex(int(hextet, 2))[2:].zfill(4) + '.'
+
+                    if split == binSplit[-1]:
+                        asciiOutput += ipDec
+                    else:
+                        asciiOutput += ipDec + '-'
+                else:
+                    asciiOutput += str(int(split, 2)) + '-'
+        
+            return asciiOutput
         else:
             return 'Please provide correct version.'
 
