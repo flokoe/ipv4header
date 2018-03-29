@@ -26,11 +26,11 @@ class Verarbeiter:
                     setattr(header, field, eingabe)
 
     def printAll(self, header, fields):
-        output = ''
-        outputBin = ''
+        output = outputBin = ''
         output += str(getattr(header, 'version')) + '-'
         outputBin += bin(getattr(header, 'version'))[2:].zfill(4) + ' '
 
+        # dont print hyphen at the end
         for field in fields:
             if field == 'dip':
                 output += str(getattr(header, field))
@@ -77,11 +77,7 @@ class Verarbeiter:
             
                 outputBin += ' '
 
-        print('')
-        print('Output:')
-        print(output)
-        print('')
-        print(outputBin)
+        print('\nOutput:\n' + output + '\n\n' + outputBin)
 
     def printBin(self, binSplit):
         asciiOutput = ''
