@@ -73,7 +73,7 @@ class Verarbeiter:
                     for split in v6IPSplit:
                         v6IPBin += bin(int(split, 16))[2:].zfill(16)
 
-                    outputBin += v6IPBin + ' '
+                    outputBin += v6IPBin
             
                 outputBin += ' '
 
@@ -85,8 +85,7 @@ class Verarbeiter:
 
     def printBin(self, binSplit):
         asciiOutput = ''
-        # ipv4
-        if binSplit[0] == '0100':
+        if binSplit[0] == '0100' or binSplit[0] == '0110':
             # for each binary field
             for split in binSplit:
                 # ignore flags field
@@ -106,17 +105,7 @@ class Verarbeiter:
                         asciiOutput += ipDec
                     else:
                         asciiOutput += ipDec + '-'
-                else:
-                    asciiOutput += str(int(split, 2)) + '-'
-        
-            return asciiOutput
-
-        # ipv6 ascii output
-        elif binSplit[0] == '0110':
-            # for each binary field
-            for split in binSplit:
-                # create ipv6 ip
-                if len(split) == 128:
+                elif len(split) == 128:
                     ipDec = ''
                     # get 8 bit fields of 32 bit string
                     ipBin = re.findall('................', split)
