@@ -38,7 +38,6 @@ class Verarbeiter:
                 output += str(getattr(header, field)) + '-'
 
         if getattr(header, 'version') == 4:
-            # get binary for each fields (ipv4)
             for field in fields:
                 if field == 'ihl':
                     outputBin += bin(int(getattr(header, field)))[2:].zfill(4)
@@ -59,8 +58,8 @@ class Verarbeiter:
                     outputBin += v4IPBin
 
                 outputBin += ' '
+        # ipv6 binary output
         else:
-            # get binary for each fields (ipv6)
             for field in fields:
                 if field in ['trafficClass', 'nextHeader', 'hopLimit']:
                     outputBin += bin(int(getattr(header, field)))[2:].zfill(8)
@@ -88,36 +87,30 @@ class Verarbeiter:
                 # ignore flags field
                 if split == '000':
                     asciiOutput += split + '-'
-                # get ipv4 in ascii
                 elif len(split) == 32:
                     ipDec = ''
                     # get 8 bit fields of 32 bit string
                     ipBin = re.findall('........', split)
                     for octet in ipBin:
-                        # dont add dot at last element
                         if octet == ipBin[-1]:
                             ipDec += str(int(octet, 2))
                         else:
                             ipDec += str(int(octet, 2)) + '.'
 
-                    # dont add hyphen at last element
                     if split == binSplit[-1]:
                         asciiOutput += ipDec
                     else:
                         asciiOutput += ipDec + '-'
-                # get ipv6 in ascii
                 elif len(split) == 128:
                     ipDec = ''
                     # get 8 bit fields of 32 bit string
                     ipBin = re.findall('................', split)
                     for hextet in ipBin:
-                        # dont add dot at last element
                         if hextet == ipBin[-1]:
                             ipDec += hex(int(hextet, 2))[2:].zfill(4)
                         else:
                             ipDec += hex(int(hextet, 2))[2:].zfill(4) + '.'
 
-                    # dont add hyphen at last element
                     if split == binSplit[-1]:
                         asciiOutput += ipDec
                     else:
